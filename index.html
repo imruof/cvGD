@@ -4,62 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mon CV 3D – Three.js (OBJ sans texture)</title>
-  <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js';
-    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/controls/OrbitControls.js';
-    import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/loaders/OBJLoader.js';
-
-    // ---------- scène, caméra, rendu ----------
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf6f6f9);
-
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 1.2, 3);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    // Lumière basique (ambiante + directionnelle)
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const dir = new THREE.DirectionalLight(0xffffff, 0.6);
-    dir.position.set(2, 4, 2);
-    scene.add(dir);
-
-    // ---------- chargement OBJ seul (sans .mtl) ----------
-    const loader = new OBJLoader();
-    loader.setPath('assets/');
-    loader.load('chapnugetexturedlowlowmeshlab50000 - Copie.obj', (obj) => {
-      // Si aucun matériau n'est présent, applique un matériau gris standard
-      obj.traverse((child) => {
-        if (child.isMesh && !child.material) {
-          child.material = new THREE.MeshStandardMaterial({ color: 0xcccccc });
-        }
-      });
-      obj.scale.set(1, 1, 1); // Ajuste la taille si nécessaire
-      scene.add(obj);
-    }, undefined, (err) => {
-      console.error('Erreur de chargement OBJ :', err);
-    });
-
-    // Contrôles utilisateur
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    // Responsive
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-  </script>
   <style>
     body { margin: 0; font-family: system-ui, sans-serif; }
     #infos { position: fixed; top: 1rem; left: 1rem; z-index: 10; background: #ffffffcc; padding: .5rem 1rem; border-radius: .5rem; }
@@ -70,5 +14,66 @@
     <h1 style="margin: .2em 0;">Ton Nom</h1>
     <p>Développeur Web &amp; 3D</p>
   </div>
+
+  <!-- Script placé APRÈS le body pour être sûr que document.body existe -->
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/controls/OrbitControls.js';
+    import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/loaders/OBJLoader.js';
+
+    // Attend que le DOM soit prêt (par sécurité)
+    window.addEventListener('DOMContentLoaded', () => {
+      // ---------- scène, caméra, rendu ----------
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf6f6f9);
+
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 1.2, 3);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // Lumière basique (ambiante + directionnelle)
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const dir = new THREE.DirectionalLight(0xffffff, 0.6);
+      dir.position.set(2, 4, 2);
+      scene.add(dir);
+
+      // ---------- chargement OBJ seul (sans .mtl) ----------
+      const loader = new OBJLoader();
+      loader.setPath('assets/');
+      loader.load('chapnugetexturedlowlowmeshlab50000 - Copie.obj', (obj) => {
+        // Applique un matériau gris si aucun n'est présent
+        obj.traverse((child) => {
+          if (child.isMesh && (!child.material || Array.isArray(child.material) && child.material.length === 0)) {
+            child.material = new THREE.MeshStandardMaterial({ color: 0xcccccc });
+          }
+        });
+        obj.scale.set(1, 1, 1); // Ajuste la taille si nécessaire
+        scene.add(obj);
+      }, undefined, (err) => {
+        console.error('Erreur de chargement OBJ :', err);
+      });
+
+      // Contrôles utilisateur
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Responsive
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    });
+  </script>
 </body>
 </html>
