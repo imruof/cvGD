@@ -31,14 +31,50 @@
 </head>
 <body>
   <div id="infos">
-    <h1 style="margin:.2em 0;">Ton Nom</h1>
-    <p>Développeur Web &amp; 3D</p>
+    <h1>Guillaume Dullier</h1>
+    <p>BIM Modeleur • 43 Rue de la République, 69220 Belleville-en-Beaujolais</p>
+    <p>📞 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p>
   </div>
 
   <div id="viewer1" class="viewer"></div>
   <div id="viewer2" class="viewer"></div>
   <div id="viewer3" class="viewer"></div>
 
+<!-- Cadre texte CV -->
+  <div id="cvframe" class="viewer">
+    <h2>Formations</h2>
+    <p><strong>2025</strong> – Titre professionnel <em>BIM Modeleur du Bâtiment</em> (Bac+2)</p>
+    <p><strong>2014</strong> – CAP Menuisier d’agencement</p>
+
+    <h2>Expériences</h2>
+    <ul>
+      <li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels à un architecte du patrimoine – <em>Edouard de Vimal Architecte</em> (relevés & diagnostics)</li>
+      <li><strong>06/2022 – 05/2023</strong> : Charpentier – Alliance Bois Métal</li>
+      <li><strong>05/2021 – 02/2022</strong> : Agent de production – 21 Degrés Sud</li>
+      <li><strong>03/2017 – 03/2020</strong> : Menuisier cintreur – Formalis</li>
+      <li><strong>01/2016 – 12/2016</strong> : Travaux de réhabilitation – Particulier</li>
+      <li><strong>09/2015 – 11/2015</strong> : Monteur presseur fermettes / ossature bois – COBA</li>
+      <li><strong>03/2015 – 08/2015</strong> : Menuisier – Société Santailer</li>
+      <li><strong>09/2014 – 11/2014</strong> : Stagiaire – Menuiserie Pourtaud Yohan</li>
+    </ul>
+
+    <h2>Compétences clés</h2>
+    <ul>
+      <li>Revit, AutoCAD (intermédiaire)</li>
+      <li>Agencement intérieur, charpente bois</li>
+      <li>Curiosité, persévérance, rigueur</li>
+      <li>Notions : Python, électricité, plomberie</li>
+    </ul>
+
+    <h2>Langues & Permis</h2>
+    <p>Anglais (intermédiaire) • Allemand (débutant) • Permis B</p>
+
+    <h2>Centres d’intérêt</h2>
+    <p>Cyclisme de loisir, photogrammétrie, Gaussian Splatting</p>
+  </div>
+
+  <!-- Les <script> existants (viewers 3D, parallax, hauteur) restent tels quels -->
+  <!-- (Ne touche pas aux blocs <script> déjà présents plus bas) -->
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
