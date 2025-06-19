@@ -5,32 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mon CV 3D – Rotation Z continue du nuage</title>
   <style>
-    body{
-      margin:0;
-      font-family:system-ui,sans-serif;
-      /* Fond suit le défilement – parallax léger */
-      background:url("assets/Projetcv_page-0001.jpg") center top/cover no-repeat;
-    }
+    body{margin:0;font-family:system-ui,sans-serif;background:url("assets/Projetcv_page-0001.jpg") center top/cover no-repeat;}
     #infos{position:fixed;top:1rem;left:1rem;z-index:10;background:#ffffffcc;padding:.5rem 1rem;border-radius:.5rem}
     .viewer{width:100%;max-width:800px;height:500px;margin:120px auto 2rem;border:2px solid #ddd;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);background:#e5e7eb;overflow:hidden}
-    /* override pour cadres texte */
-    .viewer.cvbox{height:auto;overflow:visible}
-    /* cadres texte transparents */
-    .cvbox{background:rgba(255,255,255,.65);backdrop-filter:blur(2px);}
-    /* ---------- Responsive petites largeurs ---------- */
-    @media (max-width:600px){
-      #infos{left:50%;transform:translateX(-50%);top:.5rem;padding:.4rem .8rem;text-align:center;}
-      .viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}
-    }
+    /* cadres texte transparents et auto‑height */
+    .viewer.cvbox{height:auto;overflow:visible;background:rgba(255,255,255,.65);backdrop-filter:blur(2px);}
+    @media(max-width:600px){#infos{left:50%;transform:translateX(-50%);top:.5rem;padding:.4rem .8rem;text-align:center;}.viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}}
   </style>
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"
-    }
-  }
-  </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"}}</script>
 </head>
 <body>
   <div id="infos">
@@ -38,9 +20,13 @@
     <p>BIM Modeleur • 43 Rue de la République, 69220 Belleville-en-Beaujolais</p>
     <p>📞 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p>
   </div>
+
+  <!-- Viewers 3D -->
   <div id="viewer1" class="viewer"></div>
   <div id="viewer2" class="viewer"></div>
   <div id="viewer3" class="viewer"></div>
+
+  <!-- Encarts texte -->
   <div id="frame-formations" class="viewer cvbox">
     <h2>Formations</h2>
     <p><strong>2025</strong> – Titre professionnel <em>BIM Modeleur du Bâtiment</em> (Bac+2)</p>
@@ -49,12 +35,12 @@
   <div id="frame-experiences" class="viewer cvbox">
     <h2>Expériences</h2>
     <ul>
-      <li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels à un architecte du patrimoine – <em>Edouard de Vimal Architecte</em></li>
+      <li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels – <em>Edouard de Vimal Architecte</em></li>
       <li><strong>06/2022 – 05/2023</strong> : Charpentier – Alliance Bois Métal</li>
       <li><strong>05/2021 – 02/2022</strong> : Agent de production – 21 Degrés Sud</li>
       <li><strong>03/2017 – 03/2020</strong> : Menuisier cintreur – Formalis</li>
-      <li><strong>01/2016 – 12/2016</strong> : Travaux de réhabilitation – Particulier</li>
-      <li><strong>09/2015 – 11/2015</strong> : Monteur presseur fermettes/ossature bois – COBA</li>
+      <li><strong>01/2016 – 12/2016</strong> : Réhabilitation – Particulier</li>
+      <li><strong>09/2015 – 11/2015</strong> : Pressage fermettes/ossature bois – COBA</li>
       <li><strong>03/2015 – 08/2015</strong> : Menuisier – Société Santailer</li>
       <li><strong>09/2014 – 11/2014</strong> : Stagiaire – Menuiserie Pourtaud Yohan</li>
     </ul>
@@ -72,28 +58,36 @@
     <h2>Centres d’intérêt</h2>
     <p>Cyclisme de loisir, photogrammétrie, Gaussian Splatting</p>
   </div>
+
+  <!-- Scripts -->
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+
     const Z = new THREE.Vector3(0,0,1);
-    function createViewer(id,file,rot){
+
+    function createViewer(id,file,{rotateZ=false,scale=1}={}){
       const c=document.getElementById(id);
       const scene=new THREE.Scene();scene.background=new THREE.Color(0xf6f6f9);
       const cam=new THREE.PerspectiveCamera(45,1,0.1,1000);cam.position.set(0,1,5);
       const renderer=new THREE.WebGLRenderer({antialias:true});c.appendChild(renderer.domElement);
       const controls=new OrbitControls(cam,renderer.domElement);controls.enableDamping=true;
       scene.add(new THREE.AmbientLight(0xffffff,0.6));const dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(2,4,2);scene.add(dl);
-      function resize(){const w=c.clientWidth,h=c.clientHeight;cam.aspect=w/h;cam.updateProjectionMatrix();renderer.setSize(w,h);}resize();window.addEventListener('resize',resize);
+      function resize(){const w=c.clientWidth,h=c.clientHeight;cam.aspect=w/h;cam.updateProjectionMatrix();
+          if(scale!==1) target.scale.setScalar(scale);renderer.setSize(w,h);}resize();window.addEventListener('resize',resize);
       const loader=file.endsWith('.ply')?new PLYLoader():new OBJLoader();loader.setPath('assets/');
       let pivot=null,obj=null;
-      loader.load(file,m=>{if(file.endsWith('.ply')){const g=m;g.computeBoundingBox();const col=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:col,color:col?undefined:0xffffff});obj=new THREE.Points(g,mat);pivot=new THREE.Group();pivot.add(obj);pivot.rotation.x=-Math.PI/2;scene.add(pivot);}else{obj=m;obj.traverse(n=>{if(n.isMesh&&!n.material){n.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}const t=pivot||obj;const box=new THREE.Box3().setFromObject(t);const size=box.getSize(new THREE.Vector3()).length();const ctr=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(cam.fov*Math.PI/360))*1.2;cam.position.set(0,0,dist).add(ctr);controls.target.copy(ctr);controls.update();cam.near=dist/100;cam.far=dist*100;cam.updateProjectionMatrix();});
-      function animate(){requestAnimationFrame(animate);if(rot){if(pivot)pivot.rotation.z-=0.01;else if(obj)obj.rotateOnWorldAxis(Z,-0.01);}controls.update();renderer.render(scene,cam);}animate();
+      loader.load(file,m=>{
+        if(file.endsWith('.ply')){
+          const g=m;g.computeBoundingBox();const hasCol=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:hasCol,color:hasCol?undefined:0xffffff});obj=new THREE.Points(g,mat);pivot=new THREE.Group();pivot.add(obj);pivot.rotation.x=-Math.PI/2;scene.add(pivot);}else{obj=m;obj.traverse(n=>{if(n.isMesh&&!n.material){n.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}const target=pivot||obj;const box=new THREE.Box3().setFromObject(target);const size=box.getSize(new THREE.Vector3()).length();const ctr=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(cam.fov*Math.PI/360))*1.2;cam.position.set(0,0,dist).add(ctr);controls.target.copy(ctr);controls.update();cam.near=dist/100;cam.far=dist*100;cam.updateProjectionMatrix();});
+      function animate(){requestAnimationFrame(animate);if(rotateZ){if(pivot)pivot.rotation.z-=0.01;else if(obj)obj.rotateOnWorldAxis(Z,-0.01);}controls.update();renderer.render(scene,cam);}animate();
     }
-    createViewer('viewer1','6969 - Cloud.subsampled.ply',true);
+
+    createViewer('viewer1','6969 - Cloud.subsampled.ply',{rotateZ:true});
     createViewer('viewer2','chapnugetextured_simplificationcompletteMeshLab1000000.obj');
-    createViewer('viewer3','6969 - Cloud.subsampled.ply',true);
+    createViewer('viewer3','6969 - Cloud.subsampled.ply',{rotateZ:true,scale:1.7});
   </script>
   <script>window.addEventListener('scroll',()=>{document.body.style.backgroundPositionY=(window.pageYOffset*-0.3)+'px';});const bg=new Image();bg.src='assets/Projetcv_page-0001.jpg';bg.onload=()=>{document.body.style.minHeight=bg.naturalHeight+'px';};</script>
 </body>
