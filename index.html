@@ -94,7 +94,9 @@
             vertexColors: hasColor,
             color: hasColor ? undefined : 0xffffff
           });
-          object = new THREE.Points(geometry, material);
+          object = new THREE.Points($1;
+          // rotation initiale : 90° autour de X (bas → haut)
+          object.rotation.x = -Math.PI / 2;
         } else {
           object = model;
           // assure un matériau si absent
