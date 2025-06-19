@@ -82,9 +82,19 @@
       loader.load(fileName, (model)=>{
         let object;
         if(ext === 'ply'){
-          // PLYLoader renvoie une géométrie, créons un maillage
-          const material = new THREE.MeshStandardMaterial({ color:0x999999 });
-          object = new THREE.Mesh(model, material);
+          // PLYLoader renvoie une géométrie : affichons-la en nuage de points
+          const geometry = model;
+          geometry.computeBoundingBox();
+          const hasColor = geometry.hasAttribute('color');
+          const bboxSize = geometry.boundingBox.getSize(new THREE.Vector3()).length();
+          const pointSize = bboxSize * 0.002; // réglage empirique
+          const material = new THREE.PointsMaterial({
+            size: pointSize,
+            sizeAttenuation: true,
+            vertexColors: hasColor,
+            color: hasColor ? undefined : 0xffffff
+          });
+          object = new THREE.Points(geometry, material);
         } else {
           object = model;
           // assure un matériau si absent
