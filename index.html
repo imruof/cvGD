@@ -3,177 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mon CV 3D – Rotation Z continue du nuage</title>
+  <title>Guillaume Dullier – CV 3D interactif</title>
   <style>
-    body{
-      margin:0;
-      font-family:system-ui,sans-serif;
-      /* Fond suit le défilement – parallax léger */
-      background:url("assets/Projetcv_page-0001.jpg") center top/cover no-repeat;
-    }
-    #infos{position:fixed;top:1rem;left:1rem;z-index:10;background:#ffffffcc;padding:.5rem 1rem;border-radius:.5rem}
-    .viewer{width:100%;max-width:800px;height:500px;margin:120px auto 2rem;border:2px solid #ddd;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);background:#e5e7eb;overflow:hidden}
-    /* ---------- Responsive petites largeurs ---------- */
-    @media (max-width:600px){
-      #infos{left:50%;transform:translateX(-50%);top:.5rem;padding:.4rem .8rem;text-align:center;}
-      .viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}
-    }
+    body{margin:0;font-family:"Inter",system-ui,sans-serif;background:url("assets/Projetcv_page-0001.jpg") center top/cover no-repeat;}
+    #infos{position:fixed;top:1rem;left:1rem;z-index:10;background:#ffffffcc;padding:.6rem 1rem;border-radius:.75rem;backdrop-filter:blur(4px);line-height:1.4;max-width:90%;}
+    #infos h1{margin:0 0 .25rem;font-size:1.25rem;font-weight:600;}
+    #infos p{margin:0;font-size:.95rem;}
+    .viewer{width:100%;max-width:800px;height:500px;margin:130px auto 2rem;border:2px solid #ddd;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);background:#e5e7eb;overflow:hidden}
+    .cvbox{padding:1.25rem 1.5rem;background:rgba(255,255,255,.6);backdrop-filter:blur(2px);overflow:auto;backdrop-filter:blur(2px);overflow:auto;}
+    .cvbox h2{margin-top:1.1rem;color:#2563eb;font-size:1.1rem;}
+    .cvbox ul{margin-left:1.1rem;padding-left:0;list-style:disc;}
+    .cvbox p,.cvbox li{font-size:.95rem;margin:.35rem 0;}
+    @media(max-width:600px){#infos{left:50%;transform:translateX(-50%);top:.4rem;padding:.45rem .8rem;text-align:center;}.viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}.cvbox{margin-top:1.5rem;}}
   </style>
-
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"
-    }
-  }
-  </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"}}</script>
 </head>
 <body>
   <div id="infos">
-    <h1>Guillaume Dullier</h1>
-    <p>BIM Modeleur • 43 Rue de la République, 69220 Belleville-en-Beaujolais</p>
-    <p>📞 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p>
+    <h1>Guillaume Dullier</h1>
+    <p>BIM Modeleur • 43 Rue de la République, 69220 Belleville‑en‑Beaujolais</p>
+    <p>📞 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p>
   </div>
 
+  <!-- Viewers 3D -->
   <div id="viewer1" class="viewer"></div>
   <div id="viewer2" class="viewer"></div>
   <div id="viewer3" class="viewer"></div>
 
-<!-- Cadre Formations -->
-  <div id="frame-formations" class="viewer cvbox">
+  <!-- Formations -->
+  <div class="viewer cvbox" id="frame-formations">
     <h2>Formations</h2>
     <p><strong>2025</strong> – Titre professionnel <em>BIM Modeleur du Bâtiment</em> (Bac+2)</p>
     <p><strong>2014</strong> – CAP Menuisier d’agencement</p>
   </div>
 
-  <!-- Cadre Expériences -->
-  <div id="frame-experiences" class="viewer cvbox">
+  <!-- Expériences -->
+  <div class="viewer cvbox" id="frame-experiences">
     <h2>Expériences</h2>
     <ul>
-      <li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels à un architecte du patrimoine – <em>Edouard de Vimal Architecte</em></li>
-      <li><strong>06/2022 – 05/2023</strong> : Charpentier – Alliance Bois Métal</li>
-      <li><strong>05/2021 – 02/2022</strong> : Agent de production – 21 Degrés Sud</li>
-      <li><strong>03/2017 – 03/2020</strong> : Menuisier cintreur – Formalis</li>
-      <li><strong>01/2016 – 12/2016</strong> : Travaux de réhabilitation – Particulier</li>
-      <li><strong>09/2015 – 11/2015</strong> : Monteur presseur fermettes / ossature bois – COBA</li>
-      <li><strong>03/2015 – 08/2015</strong> : Menuisier – Société Santailer</li>
-      <li><strong>09/2014 – 11/2014</strong> : Stagiaire – Menuiserie Pourtaud Yohan</li>
+      <li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels – <em>Edouard de Vimal Architecte</em></li>
+      <li><strong>06/2022 – 05/2023</strong> : Charpentier – Alliance Bois Métal</li>
+      <li><strong>05/2021 – 02/2022</strong> : Agent de production – 21 Degrés Sud</li>
+      <li><strong>03/2017 – 03/2020</strong> : Menuisier cintreur – Formalis</li>
+      <li><strong>01/2016 – 12/2016</strong> : Réhabilitation – Particulier</li>
+      <li><strong>09/2015 – 11/2015</strong> : Pressage fermettes – COBA</li>
+      <li><strong>03/2015 – 08/2015</strong> : Menuisier – Société Santailer</li>
+      <li><strong>09/2014 – 11/2014</strong> : Stagiaire – Menuiserie Pourtaud Yohan</li>
     </ul>
   </div>
 
-  <!-- Cadre Compétences / Divers -->
-  <div id="frame-divers" class="viewer cvbox">
+  <!-- Compétences et divers -->
+  <div class="viewer cvbox" id="frame-divers">
     <h2>Compétences clés</h2>
     <ul>
-      <li>Maîtrise intermédiaire : Revit, AutoCAD</li>
-      <li>Agencement intérieur, terminologie charpente bois</li>
-      <li>Curiosité, persévérance, rigueur & précision</li>
+      <li>Revit, AutoCAD (intermédiaire)</li>
+      <li>Agencement intérieur, charpente bois</li>
+      <li>Curiosité, persévérance, rigueur</li>
       <li>Notions : Python, électricité, plomberie</li>
     </ul>
-
     <h2>Langues & Permis</h2>
-    <p>Anglais (intermédiaire) • Allemand (débutant) • Permis B</p>
-
+    <p>Anglais (intermédiaire) • Allemand (débutant) • Permis B</p>
     <h2>Centres d’intérêt</h2>
-    <p>Cyclisme de loisir, photogrammétrie, Gaussian Splatting</p>
+    <p>Cyclisme de loisir, photogrammétrie, Gaussian Splatting</p>
   </div>
 
-
-  <!-- Les <script> existants (viewers 3D, parallax, hauteur) restent tels quels -->
-  <!-- (Ne touche pas aux blocs <script> déjà présents plus bas) -->
+  <!-- JS -->
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { OBJLoader }    from 'three/addons/loaders/OBJLoader.js';
     import { PLYLoader }    from 'three/addons/loaders/PLYLoader.js';
 
-    /**
-     * Crée un viewer Three.js et charge un fichier 3D.
-     * @param {string} containerId  ID du div où insérer le canvas
-     * @param {string} fileName     Nom du fichier situé dans assets/
-     * @param {boolean} rotateZ     Si true, rotation continue autour de l’axe Z du monde
-     */
-    function createViewer(containerId, fileName, rotateZ=false){
-      const container=document.getElementById(containerId);
-      let width=container.clientWidth, height=container.clientHeight;
+    const AXIS_Z = new THREE.Vector3(0,0,1);
 
-      const scene=new THREE.Scene();
-      scene.background=new THREE.Color(0xf6f6f9);
-      const camera=new THREE.PerspectiveCamera(45,width/height,0.1,1000);
-      camera.position.set(0,1,5);
-      const renderer=new THREE.WebGLRenderer({antialias:true});
-      renderer.setSize(width,height);
-      container.appendChild(renderer.domElement);
-
-      scene.add(new THREE.AmbientLight(0xffffff,0.6));
-      const dirL=new THREE.DirectionalLight(0xffffff,0.6);dirL.position.set(2,4,2);scene.add(dirL);
-
+    function createViewer(id,file,rotateZ=false){
+      const c=document.getElementById(id);
+      const scene=new THREE.Scene();scene.background=new THREE.Color(0xf6f6f9);
+      const camera=new THREE.PerspectiveCamera(45,1,0.1,1000);camera.position.set(0,1,5);
+      const renderer=new THREE.WebGLRenderer({antialias:true});c.appendChild(renderer.domElement);
       const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;
+      scene.add(new THREE.AmbientLight(0xffffff,0.6));const dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(2,4,2);scene.add(dl);
 
-      const ext=fileName.split('.').pop().toLowerCase();
-      const loader= ext==='obj'? new OBJLoader(): ext==='ply'? new PLYLoader(): null;
-      if(!loader){console.error('Format non supporté');return;}
-      loader.setPath('assets/');
+      function resize(){const w=c.clientWidth,h=c.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);}resize();window.addEventListener('resize',resize);
 
-      let pivot=null, object=null;
-      loader.load(fileName,(model)=>{
-        if(ext==='ply'){
-          const geom=model;geom.computeBoundingBox();
-          const hasColor=geom.hasAttribute('color');
-          const size=geom.boundingBox.getSize(new THREE.Vector3()).length();
-          const mat=new THREE.PointsMaterial({size:size*0.002,sizeAttenuation:true,vertexColors:hasColor,color:hasColor?undefined:0xffffff});
-          object=new THREE.Points(geom,mat);
-          pivot=new THREE.Group();pivot.add(object);
-          pivot.rotation.x=-Math.PI/2; // inclinaison 90° X
-          scene.add(pivot);
-        }else{
-          object=model;object.traverse(c=>{if(c.isMesh&&!c.material){c.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(object);
-        }
+      const loader=file.endsWith('.ply')?new PLYLoader():new OBJLoader();loader.setPath('assets/');
+      let pivot=null,obj=null;
+      loader.load(file,model=>{
+        if(file.endsWith('.ply')){
+          const g=model;g.computeBoundingBox();const hasCol=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();
+          const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:hasCol,color:hasCol?undefined:0xffffff});
+          obj=new THREE.Points(g,mat);pivot=new THREE.Group();pivot.add(obj);pivot.rotation.x=-Math.PI/2;scene.add(pivot);
+        }else{obj=model;obj.traverse(m=>{if(m.isMesh&&!m.material){m.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}        
+        const tgt=pivot||obj;const box=new THREE.Box3().setFromObject(tgt);const size=box.getSize(new THREE.Vector3()).length();const center=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(camera.fov*Math.PI/360))*1.2;camera.position.set(0,0,dist).add(center);controls.target.copy(center);controls.update();camera.near=dist/100;camera.far=dist*100;camera.updateProjectionMatrix();
+      },undefined,err=>console.error(`Erreur chargement ${file}:`,err));
 
-        const target=pivot||object;
-        const box=new THREE.Box3().setFromObject(target);
-        const sizeVec=box.getSize(new THREE.Vector3());
-        const center=box.getCenter(new THREE.Vector3());
-        const maxDim=Math.max(sizeVec.x,sizeVec.y,sizeVec.z);
-        const dist=(maxDim/2)/Math.tan(camera.fov*Math.PI/180/2)*1.3;
-        const dir=new THREE.Vector3().subVectors(camera.position,controls.target).normalize();
-        camera.position.copy(dir.multiplyScalar(dist).add(center));
-        controls.target.copy(center);controls.update();
-        camera.near=dist/100;camera.far=dist*100;camera.updateProjectionMatrix();
-      },undefined,e=>console.error(e));
-
-      function animate(){
-        requestAnimationFrame(animate);
-        if(rotateZ){
-          if(pivot){pivot.rotation.z -= 0.01;} else if(object){object.rotateOnWorldAxis(new THREE.Vector3(0,0,1), -0.01);} 
-        }
-        controls.update();
-        renderer.render(scene,camera);
-      }
-      animate();
-
-      window.addEventListener('resize',()=>{width=container.clientWidth;height=container.clientHeight;camera.aspect=width/height;camera.updateProjectionMatrix();renderer.setSize(width,height);});
-    }
-
-    createViewer('viewer1', '6969 - Cloud.subsampled.ply', true);
-    createViewer('viewer2','chapnugetextured_simplificationcompletteMeshLab1000000.obj');
-    createViewer('viewer3','6969 - Cloud.subsampled.ply',true); // rotation Z continue
-  </script>
-  <!-- Parallax : déplace le fond selon le scroll -->
-  <script>
-    window.addEventListener('scroll', () => {
-      const offset = window.pageYOffset * -0.3; // facteur -0.3 pour un léger mouvement inverse
-      document.body.style.backgroundPositionY = offset + 'px';
-    });
-    </script>
-  <!-- Ajuste la hauteur de la page à celle de l'image de fond -->
-  <script>
-    const bg = new Image();
-    bg.src = 'assets/Projetcv_page-0001.jpg';
-    bg.onload = () => {
-      document.body.style.minHeight = bg.naturalHeight + 'px';
-    };
-  </script>
-</body>
-</html>
+      function animate(){requestAnimationFrame(animate);if(rotateZ){if(pivot){pivot.rotation.z-=0.01;}else if(obj){obj.rotateOnWorldAxis(AXIS_Z,-0.01);}}controls.update();renderer
