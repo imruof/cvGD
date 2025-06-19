@@ -3,10 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mon CV 3D – Three.js (OBJ sans texture)</title>
+  <title>Mon CV 3D – Three.js (cadre fixe)</title>
   <style>
-    body { margin:0; font-family:system-ui,sans-serif; }
+    body{margin:0;font-family:system-ui,sans-serif;background:#f6f6f9}
     #infos{position:fixed;top:1rem;left:1rem;z-index:10;background:#ffffffcc;padding:.5rem 1rem;border-radius:.5rem}
+    /* Cadre du viewer 3D */
+    #viewer{
+      width:100%;          /* prend toute la largeur disponible */
+      max-width:800px;     /* mais reste contenu */
+      height:500px;        /* hauteur fixe (modifiable) */
+      margin:120px auto 2rem;  /* centré, décalé sous le bandeau */
+      border:2px solid #ddd;
+      border-radius:.75rem;
+      box-shadow:0 4px 12px rgba(0,0,0,.1);
+      background:#e5e7eb;  /* couleur de fond si le canvas n'est pas chargé */
+      overflow:hidden;
+    }
   </style>
 
   <!-- Import maps : indique au navigateur où trouver le module "three" -->
@@ -25,22 +37,31 @@
     <p>Développeur Web &amp; 3D</p>
   </div>
 
+  <!-- Cadre où sera inséré le renderer Three.js -->
+  <div id="viewer"></div>
+
   <!-- Script principal -->
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { OBJLoader }    from 'three/addons/loaders/OBJLoader.js';
 
+    const container = document.getElementById('viewer');
+
+    // Taille initiale du cadre
+    let width  = container.clientWidth;
+    let height = container.clientHeight;
+
     // ---------- scène, caméra, rendu ----------
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf6f6f9);
 
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
     camera.position.set(0, 1.2, 3);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    renderer.setSize(width, height);
+    container.appendChild(renderer.domElement);
 
     // Lumière basique
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
@@ -71,11 +92,13 @@
     }
     animate();
 
-    // Responsive
+    // Responsive : recalcule la taille du renderer quand la fenêtre change
     window.addEventListener('resize', ()=>{
-      camera.aspect = window.innerWidth / window.innerHeight;
+      width  = container.clientWidth;
+      height = container.clientHeight;
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(width, height);
     });
   </script>
 </body>
