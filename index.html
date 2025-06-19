@@ -75,13 +75,12 @@
       const renderer=new THREE.WebGLRenderer({antialias:true});c.appendChild(renderer.domElement);
       const controls=new OrbitControls(cam,renderer.domElement);controls.enableDamping=true;
       scene.add(new THREE.AmbientLight(0xffffff,0.6));const dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(2,4,2);scene.add(dl);
-      function resize(){const w=c.clientWidth,h=c.clientHeight;cam.aspect=w/h;cam.updateProjectionMatrix();
-          if(scale!==1) target.scale.setScalar(scale);renderer.setSize(w,h);}resize();window.addEventListener('resize',resize);
+      function resize(){const w=c.clientWidth,h=c.clientHeight;cam.aspect=w/h;cam.updateProjectionMatrix();renderer.setSize(w,h);}resize();window.addEventListener('resize',resize);
       const loader=file.endsWith('.ply')?new PLYLoader():new OBJLoader();loader.setPath('assets/');
       let pivot=null,obj=null;
       loader.load(file,m=>{
         if(file.endsWith('.ply')){
-          const g=m;g.computeBoundingBox();const hasCol=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:hasCol,color:hasCol?undefined:0xffffff});obj=new THREE.Points(g,mat);pivot=new THREE.Group();pivot.add(obj);pivot.rotation.x=-Math.PI/2;scene.add(pivot);}else{obj=m;obj.traverse(n=>{if(n.isMesh&&!n.material){n.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}const target=pivot||obj;const box=new THREE.Box3().setFromObject(target);const size=box.getSize(new THREE.Vector3()).length();const ctr=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(cam.fov*Math.PI/360))*1.2;cam.position.set(0,0,dist).add(ctr);controls.target.copy(ctr);controls.update();cam.near=dist/100;cam.far=dist*100;cam.updateProjectionMatrix();});
+          const g=m;g.computeBoundingBox();const hasCol=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:hasCol,color:hasCol?undefined:0xffffff});obj=new THREE.Points(g,mat);pivot=new THREE.Group();pivot.add(obj);pivot.rotation.x=-Math.PI/2;scene.add(pivot);}else{obj=m;obj.traverse(n=>{if(n.isMesh&&!n.material){n.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}const target=pivot||obj;target.scale.setScalar(scale);const box=new THREE.Box3().setFromObject(target);const size=box.getSize(new THREE.Vector3()).length();const ctr=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(cam.fov*Math.PI/360))*1.2;cam.position.set(0,0,dist).add(ctr);controls.target.copy(ctr);controls.update();cam.near=dist/100;cam.far=dist*100;cam.updateProjectionMatrix();});
       function animate(){requestAnimationFrame(animate);if(rotateZ){if(pivot)pivot.rotation.z-=0.01;else if(obj)obj.rotateOnWorldAxis(Z,-0.01);}controls.update();renderer.render(scene,cam);}animate();
     }
 
