@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mon CV 3D – Trois viewers (rotation verticale continue PLY)</title>
+  <title>Mon CV 3D – Trois viewers (rotation Y correcte PLY)</title>
   <style>
     body { margin: 0; font-family: system-ui, sans-serif; background: #f6f6f9; }
     #infos { position: fixed; top: 1rem; left: 1rem; z-index: 10; background: #ffffffcc; padding: .5rem 1rem; border-radius: .5rem; }
@@ -46,14 +46,13 @@
      * Crée un viewer Three.js et charge un fichier 3D.
      * @param {string} containerId  ID du div où insérer le canvas
      * @param {string} fileName     Nom du fichier dans assets/
-     * @param {boolean} rotateY     Applique une rotation continue autour de Y
+     * @param {boolean} rotateY     Si true, fait tourner autour de l’axe Y (vertical monde)
      */
     function createViewer(containerId, fileName, rotateY = false){
       const container = document.getElementById(containerId);
       let width  = container.clientWidth;
       let height = container.clientHeight;
 
-      // scène, caméra, rendu
       const scene  = new THREE.Scene();
       scene.background = new THREE.Color(0xf6f6f9);
 
@@ -64,17 +63,14 @@
       renderer.setSize(width, height);
       container.appendChild(renderer.domElement);
 
-      // Lumières
       scene.add(new THREE.AmbientLight(0xffffff, 0.6));
       const dLight = new THREE.DirectionalLight(0xffffff, 0.6);
       dLight.position.set(2,4,2);
       scene.add(dLight);
 
-      // Contrôles
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // Choix loader
       const ext = fileName.split('.').pop().toLowerCase();
       let loader;
       if(ext === 'obj')      loader = new OBJLoader();
@@ -82,39 +78,40 @@
       else { console.error('Format non supporté :', ext); return; }
 
       loader.setPath('assets/');
-      let object = null;
+      let object = null, pivot = null; // pivot = group pour rotation monde Y
 
       loader.load(fileName, (model)=>{
         if(ext === 'ply'){
-          // Nuage de points
-          const geometry = model;
-          geometry.computeBoundingBox();
-          const hasColor = geometry.hasAttribute('color');
-          const sizeLen = geometry.boundingBox.getSize(new THREE.Vector3()).length();
-          const mat = new THREE.PointsMaterial({
-            size: sizeLen * 0.002,
-            sizeAttenuation: true,
-            vertexColors: hasColor,
-            color: hasColor ? undefined : 0xffffff
-          });
-          object = new THREE.Points(geometry, mat);
-          object.rotation.x = -Math.PI / 2; // rotation initiale
+          // Nuage de points ➜ Points
+          const geom = model;
+          geom.computeBoundingBox();
+          const hasColor = geom.hasAttribute('color');
+          const len = geom.boundingBox.getSize(new THREE.Vector3()).length();
+          const mat = new THREE.PointsMaterial({ size: len*0.002, sizeAttenuation:true, vertexColors:hasColor, color: hasColor?undefined:0xffffff });
+          object = new THREE.Points(geom, mat);
+          // Pivot pour séparer rotations
+          pivot = new THREE.Group();
+          pivot.add(object);
+          // Incline de 90° sur X
+          pivot.rotation.x = -Math.PI/2;
+          scene.add(pivot);
         } else {
           object = model;
-          object.traverse((c)=>{
+          object.traverse(c=>{
             if(c.isMesh && (!c.material || (Array.isArray(c.material)&&c.material.length===0))){
-              c.material = new THREE.MeshStandardMaterial({ color: 0xcccccc });
+              c.material = new THREE.MeshStandardMaterial({ color:0xcccccc });
             }
           });
+          scene.add(object);
         }
-        scene.add(object);
 
-        // Auto-cadrage
-        const box = new THREE.Box3().setFromObject(object);
+        // Cible pour cadrage
+        const targetNode = pivot || object;
+        const box = new THREE.Box3().setFromObject(targetNode);
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
         const maxDim = Math.max(size.x,size.y,size.z);
-        const dist = (maxDim/2) / Math.tan((camera.fov*Math.PI/180)/2) * 1.3;
+        const dist = (maxDim/2)/Math.tan((camera.fov*Math.PI/180)/2)*1.3;
         const dir = new THREE.Vector3().subVectors(camera.position, controls.target).normalize();
         camera.position.copy(dir.multiplyScalar(dist).add(center));
         controls.target.copy(center);
@@ -122,20 +119,22 @@
         camera.near = dist/100;
         camera.far  = dist*100;
         camera.updateProjectionMatrix();
-      }, undefined, (err)=> console.error(`Erreur chargement ${fileName}:`, err));
+      }, undefined, err=>console.error(`Erreur chargement ${fileName}:`, err));
 
-      // Boucle
       function animate(){
         requestAnimationFrame(animate);
-        if(rotateY && object){
-          object.rotation.y += 0.01; // rotation verticale continue
+        if(rotateY){
+          if(pivot){
+            pivot.rotation.y += 0.01; // rotation verticale monde
+          } else if(object){
+            object.rotateOnWorldAxis(new THREE.Vector3(0,1,0), 0.01);
+          }
         }
         controls.update();
         renderer.render(scene, camera);
       }
       animate();
 
-      // Responsive
       window.addEventListener('resize', ()=>{
         width  = container.clientWidth;
         height = container.clientHeight;
@@ -148,7 +147,7 @@
     // Viewers
     createViewer('viewer1', 'chapnugetexturedlowlowmeshlab50000 - Copie.obj');
     createViewer('viewer2', 'chapnugetextured_simplificationcompletteMeshLab1000000.obj');
-    // PLY : rotation initiale 90° X + rotation continue Y
+    // PLY : rotation initiale 90° X + rotation continue autour de l’axe vertical monde
     createViewer('viewer3', '6969 - Cloud.subsampled.ply', true);
   </script>
 </body>
