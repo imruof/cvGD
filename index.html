@@ -118,7 +118,14 @@
       const offset = window.pageYOffset * -0.3; // facteur -0.3 pour un léger mouvement inverse
       document.body.style.backgroundPositionY = offset + 'px';
     });
+    </script>
+  <!-- Ajuste la hauteur de la page à celle de l'image de fond -->
+  <script>
+    const bg = new Image();
+    bg.src = 'assets/Projet1_page-0001.jpg';
+    bg.onload = () => {
+      document.body.style.minHeight = bg.naturalHeight + 'px';
+    };
   </script>
 </body>
 </html>
-
