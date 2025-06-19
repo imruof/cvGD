@@ -79,6 +79,10 @@
           child.material = new THREE.MeshStandardMaterial({color:0xcccccc});
         }
       });
+
+      // ----- Rotation initiale de 90° vers le haut (axe X) -----
+      obj.rotation.x = -Math.PI / 2; // -90° transforme « couché » en « debout »
+
       scene.add(obj);
 
       // --- Auto‑cadre : ajuste caméra pour voir tout l'objet ---
@@ -87,19 +91,18 @@
       const center  = box.getCenter(new THREE.Vector3());
       const maxDim  = Math.max(sizeVec.x, sizeVec.y, sizeVec.z);
       const fov     = camera.fov * (Math.PI / 180);
-      let distance  = (maxDim/2) / Math.tan(fov/2); // distance nécessaire
-      distance     *= 1.3; // petit marge visuelle
+      let distance  = (maxDim/2) / Math.tan(fov/2);
+      distance     *= 1.3; // marge
 
-      // place la caméra
       const direction = new THREE.Vector3().subVectors(camera.position, controls.target).normalize();
       camera.position.copy(direction.multiplyScalar(distance).add(center));
       controls.target.copy(center);
       controls.update();
 
-      // adapte near/far pour éviter clipping
       camera.near = distance/100;
       camera.far  = distance*100;
       camera.updateProjectionMatrix();
+    }, undefined, (err)=>console.error('Erreur chargement OBJ:', err));
     }, undefined, (err)=>console.error('Erreur chargement OBJ:', err));
 
     // Boucle
