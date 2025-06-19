@@ -8,8 +8,8 @@
     body{
       margin:0;
       font-family:system-ui,sans-serif;
-      /* --- fond personnalisé --- */
-      background:url("assets/Projet1_page-0001.jpg") center/cover no-repeat fixed;
+      /* Fond suit le défilement – parallax léger */
+      background:url("assets/Projet1_page-0001.jpg") center top/cover no-repeat;
     }
     #infos{position:fixed;top:1rem;left:1rem;z-index:10;background:#ffffffcc;padding:.5rem 1rem;border-radius:.5rem}
     .viewer{width:100%;max-width:800px;height:500px;margin:120px auto 2rem;border:2px solid #ddd;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);background:#e5e7eb;overflow:hidden}
@@ -112,5 +112,13 @@
     createViewer('viewer2','chapnugetextured_simplificationcompletteMeshLab1000000.obj');
     createViewer('viewer3','6969 - Cloud.subsampled.ply',true); // rotation Z continue
   </script>
+  <!-- Parallax : déplace le fond selon le scroll -->
+  <script>
+    window.addEventListener('scroll', () => {
+      const offset = window.pageYOffset * -0.3; // facteur -0.3 pour un léger mouvement inverse
+      document.body.style.backgroundPositionY = offset + 'px';
+    });
+  </script>
 </body>
 </html>
+
