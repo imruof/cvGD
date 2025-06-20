@@ -37,7 +37,7 @@
   </script>
 </head>
 <body>
-  <div id="infos"><h1>Guillaume Dullier</h1><p>BIM Modeleur • 43 Rue de la République, 69220 Belleville-en-Beaujolais</p><p><a href="https://wa.me/33610262935" class="wa-btn" target="_blank" rel="noopener" aria-label="Appeler sur WhatsApp"><img src="https://img.icons8.com/color/24/000000/whatsapp.png" alt="WhatsApp"></a> 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p></div>
+  <div id="infos"><h1>Guillaume Dullier</h1><p>BIM Modeleur • 43 Rue de la République, 69220 Belleville-en-Beaujolais</p><p><a href="https://wa.me/33610262935" class="wa-btn" target="_blank" rel="noopener" aria-label="Appeler sur WhatsApp"><img src="https://img.icons8.com/color/24/000000/whatsapp.png" alt="WhatsApp"></a> 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p></div>
   <div id="viewer1" class="viewer"></div><div id="viewer2" class="viewer"></div><div id="viewer3" class="viewer"></div>
   <div id="frame-formations" class="viewer cvbox"><h2>Formations</h2><p><strong>2025</strong> – Titre professionnel <em>BIM Modeleur du Bâtiment</em> (Bac+2)</p><p><strong>2014</strong> – CAP Menuisier d’agencement</p></div>
   <div id="frame-experiences" class="viewer cvbox"><h2>Expériences</h2><ul><li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels – <em>Edouard de Vimal Architecte</em></li><li><strong>06/2022 – 05/2023</strong> : Charpentier – Alliance Bois Métal</li><li><strong>05/2021 – 02/2022</strong> : Agent de production – 21 Degrés Sud</li><li><strong>03/2017 – 03/2020</strong> : Menuisier cintreur – Formalis</li><li><strong>01/2016 – 12/2016</strong> : Réhabilitation – Particulier</li><li><strong>09/2015 – 11/2015</strong> : Pressage fermettes/ossature bois – COBA</li><li><strong>03/2015 – 08/2015</strong> : Menuisier – Société Santailer</li><li><strong>09/2014 – 11/2014</strong> : Stagiaire – Menuiserie Pourtaud Yohan</li></ul></div>
@@ -53,6 +53,45 @@
 
     function viewer(id, file, { rotateZ = false, scale = 1, offsetYRatio = 0 } = {}) {
       const c = document.getElementById(id);
+
+      /* ------------------------------------------------------------------
+         Affichage .splat via Viewer « tout‑en‑un » (plus fiable)
+         ------------------------------------------------------------------ */
+      if (file.endsWith('.splat')) {
+        const splatUrl = /^https?:\/\//.test(file)
+          ? file
+          : new URL(`assets/${file}`, import.meta.url).href;
+
+        // Crée un viewer autosuffisant (canvas, caméra, controls, loop)
+        const gsViewer = new GaussianSplats3D.Viewer({
+          sharedMemoryForWorkers: false, // force le fallback sans SharedArrayBuffer
+          showLoadingUI: true,
+        });
+
+        gsViewer
+          .addSplatScene(splatUrl, {
+            scale: [scale, scale, scale],
+          })
+          .then(() => {
+            gsViewer.start();
+            // Place son canvas dans notre conteneur
+            c.appendChild(gsViewer.renderer.domElement);
+            // Ajuste la taille en même temps que la div
+            const resize = () => {
+              const w = c.clientWidth;
+              const h = c.clientHeight;
+              gsViewer.renderer.setSize(w, h);
+              gsViewer.camera.aspect = w / h;
+              gsViewer.camera.updateProjectionMatrix();
+            };
+            resize();
+            window.addEventListener('resize', resize);
+          })
+          .catch((err) => console.error('Échec du chargement du .splat :', err));
+        return; // on quitte : pas besoin de notre pipeline Three.js
+      }
+      
+
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xf6f6f9);
 
@@ -80,19 +119,6 @@
       rez();
       window.addEventListener('resize', rez);
 
-      /* --- prise en charge des fichiers .splat ------------------------------------ */
-      if (file.endsWith('.splat')) {
-        const gs = new GaussianSplats3D.DropInViewer({
-          parentElement: c,
-          // GitHub Pages ne propose pas les en‑têtes COOP/COEP ;
-          // on désactive donc l'usage de SharedArrayBuffer.
-          sharedMemoryForWorkers: false,
-        });
-        gs.load(`assets/${file}`);
-        return; // on sort : rien d'autre à faire pour ce viewer
-      }
-      /* --------------------------------------------------------------------------- */
-
       const loader = file.endsWith('.ply') ? new PLYLoader() : new OBJLoader();
       loader.setPath('assets/');
 
@@ -102,14 +128,15 @@
         if (file.endsWith('.ply')) {
           const g = m;
           g.computeBoundingBox();
-          const col = g.hasAttribute('color');
+          const hasColors = g.hasAttribute('color');
           const len = g.boundingBox.getSize(new THREE.Vector3()).length();
-          const mat = new THREE.PointsMaterial({
+          const matParams = {
             size: len * 0.002,
             sizeAttenuation: true,
-            vertexColors: col,
-            color: col ? undefined : 0xffffff,
-          });
+            vertexColors: hasColors,
+          };
+          if (!hasColors) matParams.color = 0xffffff;
+          const mat = new THREE.PointsMaterial(matParams);
           obj = new THREE.Points(g, mat);
           piv = new THREE.Group();
           piv.add(obj);
@@ -155,7 +182,7 @@
     }
 
     viewer('viewer1', '6969 - Cloud.subsampled.ply', { rotateZ: true });
-    viewer('viewer2', 'cv.splat', { scale: 1 }); // nouveau modèle dans le deuxième viewer
+    viewer('viewer2', 'cv.compressed2.ply', { scale: 1 }); // Deuxième viewer : modèle PLY // Deuxième viewer : modèle .splat
     viewer('viewer3', '6969 - Cloud.subsampled.ply', {
       rotateZ: true,
       scale: 1.7,
