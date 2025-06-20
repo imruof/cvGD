@@ -21,7 +21,12 @@
     #infos{position:fixed;top:1rem;left:1rem;z-index:10;background:#ffffffcc;padding:.5rem 1rem;border-radius:.5rem}
     .viewer{width:100%;max-width:800px;height:500px;margin:120px auto 2rem;border:2px solid #ddd;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);background:#e5e7eb;overflow:hidden}
     .viewer.cvbox{height:auto;overflow:visible;background:rgba(255,255,255,.65);backdrop-filter:blur(2px);}
-    @media(max-width:600px){#infos{left:50%;transform:translateX(-50%);top:.5rem;padding:.4rem .8rem;text-align:center;}.viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}}
+    @media(max-width:600px){
+      #infos{left:50%;transform:translateX(-50%);top:.5rem;padding:.4rem .8rem;text-align:center;}
+      .viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}
+      /* arrière‑plan moins zoomé sur mobile */
+      body{background-size:contain;}
+    }.viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}}
 
     /* bouton WhatsApp */
     .wa-btn img{height:2.2em;vertical-align:-0.2em;margin-left:.25em;}
