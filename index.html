@@ -64,7 +64,7 @@
 
         // Crée un viewer autosuffisant (canvas, caméra, controls, loop)
         const gsViewer = new GaussianSplats3D.Viewer({
-          // on laisse le viewer gérer sa propre boucle (selfDrivenMode = true)
+          sharedMemoryForWorkers: false, // force le fallback sans SharedArrayBuffer
           showLoadingUI: true,
         });
 
