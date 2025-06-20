@@ -29,27 +29,126 @@
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"}}</script>
 </head>
 <body>
-  <div id="infos"><h1>Guillaume Dullier</h1><p>BIM Modeleur • 43 Rue de la République, 69220 Belleville-en-Beaujolais</p><p><a href="https://wa.me/33610262935" class="wa-btn" target="_blank" rel="noopener" aria-label="Appeler sur WhatsApp"><img src="https://img.icons8.com/color/24/000000/whatsapp.png" alt="WhatsApp"></a> 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p></div>
-  <div id="viewer1" class="viewer"></div><div id="viewer2" class="viewer"></div><div id="viewer3" class="viewer"></div>
-  <div id="frame-formations" class="viewer cvbox"><h2>Formations</h2><p><strong>2025</strong> – Titre professionnel <em>BIM Modeleur du Bâtiment</em> (Bac+2)</p><p><strong>2014</strong> – CAP Menuisier d’agencement</p></div>
-  <div id="frame-experiences" class="viewer cvbox"><h2>Expériences</h2><ul><li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels – <em>Edouard de Vimal Architecte</em></li><li><strong>06/2022 – 05/2023</strong> : Charpentier – Alliance Bois Métal</li><li><strong>05/2021 – 02/2022</strong> : Agent de production – 21 Degrés Sud</li><li><strong>03/2017 – 03/2020</strong> : Menuisier cintreur – Formalis</li><li><strong>01/2016 – 12/2016</strong> : Réhabilitation – Particulier</li><li><strong>09/2015 – 11/2015</strong> : Pressage fermettes/ossature bois – COBA</li><li><strong>03/2015 – 08/2015</strong> : Menuisier – Société Santailer</li><li><strong>09/2014 – 11/2014</strong> : Stagiaire – Menuiserie Pourtaud Yohan</li></ul></div>
-  <div id="frame-divers" class="viewer cvbox"><h2>Compétences clés</h2><ul><li>Maîtrise intermédiaire : Revit, AutoCAD</li><li>Agencement intérieur, terminologie charpente bois</li><li>Curiosité, persévérance, rigueur & précision</li><li>Notions : Python, électricité, plomberie</li></ul><h2>Langues & Permis</h2><p>Anglais (intermédiaire) • Allemand (débutant) • Permis B</p><h2>Centres d’intérêt</h2><p>Cyclisme de loisir, photogrammétrie, Gaussian Splatting</p></div>
+  <div id="infos">
+    <h1>Guillaume Dullier</h1>
+    <p>BIM Modeleur • 43 Rue de la République, 69220 Belleville‑en‑Beaujolais</p>
+    <p>
+      <a href="https://wa.me/33610262935" class="wa-btn" target="_blank" rel="noopener" aria-label="Appeler sur WhatsApp">
+        <img src="https://img.icons8.com/color/48/000000/whatsapp.png" alt="WhatsApp">
+      </a> 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a>
+    </p>
+  </div>
+
+  <!-- Viewers 3D -->
+  <div id="viewer1" class="viewer"></div>
+  <div id="viewer2" class="viewer"></div>
+  <div id="viewer3" class="viewer"></div>
+
+  <!-- Encarts texte -->
+  <div id="frame-formations" class="viewer cvbox">
+    <h2>Formations</h2>
+    <p><strong>2025</strong> – Titre professionnel <em>BIM Modeleur du Bâtiment</em> (Bac+2)</p>
+    <p><strong>2014</strong> – CAP Menuisier d’agencement</p>
+  </div>
+  <div id="frame-experiences" class="viewer cvbox">
+    <h2>Expériences</h2>
+    <ul>
+      <li><strong>09/2024 – 12/2024</strong> : Appuis ponctuels – <em>Edouard de Vimal Architecte</em></li>
+      <li><strong>06/2022 – 05/2023</strong> : Charpentier – Alliance Bois Métal</li>
+      <li><strong>05/2021 – 02/2022</strong> : Agent de production – 21 Degrés Sud</li>
+      <li><strong>03/2017 – 03/2020</strong> : Menuisier cintreur – Formalis</li>
+      <li><strong>01/2016 – 12/2016</strong> : Réhabilitation – Particulier</li>
+      <li><strong>09/2015 – 11/2015</strong> : Pressage fermettes/ossature bois – COBA</li>
+      <li><strong>03/2015 – 08/2015</strong> : Menuisier – Société Santailer</li>
+      <li><strong>09/2014 – 11/2014</strong> : Stagiaire – Menuiserie Pourtaud Yohan</li>
+    </ul>
+  </div>
+  <div id="frame-divers" class="viewer cvbox">
+    <h2>Compétences clés</h2>
+    <ul>
+      <li>Maîtrise intermédiaire : Revit, AutoCAD</li>
+      <li>Agencement intérieur, terminologie charpente bois</li>
+      <li>Curiosité, persévérance, rigueur & précision</li>
+      <li>Notions : Python, électricité, plomberie</li>
+    </ul>
+    <h2>Langues & Permis</h2>
+    <p>Anglais (intermédiaire) • Allemand (débutant) • Permis B</p>
+    <h2>Centres d’intérêt</h2>
+    <p>Cyclisme de loisir, photogrammétrie, Gaussian Splatting</p>
+  </div>
+
+  <!-- Script Three.js & viewers -->
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
-    const Z=new THREE.Vector3(0,0,1);
-    function viewer(id,file,{rotateZ=false,scale=1,offsetYRatio=0}={}){
-      const c=document.getElementById(id);const scene=new THREE.Scene();scene.background=new THREE.Color(0xf6f6f9);
-      const cam=new THREE.PerspectiveCamera(45,1,0.1,1000);cam.position.set(0,1,5);
-      const renderer=new THREE.WebGLRenderer({antialias:true});c.appendChild(renderer.domElement);
-      const ctl=new OrbitControls(cam,renderer.domElement);ctl.enableDamping=true;
-      scene.add(new THREE.AmbientLight(0xffffff,0.6));const dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(2,4,2);scene.add(dl);
-      const rez=()=>{const w=c.clientWidth,h=c.clientHeight;cam.aspect=w/h;cam.updateProjectionMatrix();renderer.setSize(w,h);} ;rez();window.addEventListener('resize',rez);
-      const loader=file.endsWith('.ply')?new PLYLoader():new OBJLoader();loader.setPath('assets/');
-      let piv=null,obj=null;
-      loader.load(file,m=>{
-        if(file.endsWith('.ply')){const g=m;g.computeBoundingBox();const col=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:col,color:col?undefined:0xffffff});obj=new THREE.Points(g,mat);piv=new THREE.Group();piv.add(obj);piv.rotation.x=-Math.PI/2;scene.add(piv);}else{obj=m;obj.traverse(n=>{if(n.isMesh&&!n.material){n.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}const tgt=piv||obj;if(scale!==1)tgt.scale.setScalar(scale);const box=new THREE.Box3().setFromObject(tgt);const size=box.getSize(new THREE.Vector3()).length();const ctr=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(cam.fov*Math.PI/360))*1.2;cam.position.set(0,0,dist).add(ctr);ctl.target.copy(ctr);ctl.update();cam.near=dist/100;cam.far=dist*100;cam.updateProjectionMatrix();if(offsetYRatio!==0){const offset=size*offsetYRatio;tgt.position.y-=offset;}});
-      const ani=()=>{requestAnimationFrame(ani);if(rotateZ){if(piv)piv.rotation.z-=0.01;else if(obj)obj.rotateOnWorldAxis(Z,-0.01);}ctl.update();renderer.render(scene,cam);} ;ani();}
-    viewer('viewer1','6969 - Cloud.sub
+
+    const AXIS_Z = new THREE.Vector3(0,0,1);
+
+    function createViewer(id, file, { rotateZ=false, scale=1, offsetYRatio=0 }={}) {
+      const container = document.getElementById(id);
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf6f6f9);
+
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+      camera.position.set(0, 1, 5);
+
+      const renderer = new THREE.WebGLRenderer({ antialias:true });
+      container.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+      dirLight.position.set(2,4,2);
+      scene.add(dirLight);
+
+      function onResize() {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      }
+      onResize();
+      window.addEventListener('resize', onResize);
+
+      const loader = file.endsWith('.ply') ? new PLYLoader() : new OBJLoader();
+      loader.setPath('assets/');
+
+      let pivot=null, object=null;
+      loader.load(file, model => {
+        if (file.endsWith('.ply')) {
+          const geom = model;
+          geom.computeBoundingBox();
+          const hasCol = geom.hasAttribute('color');
+          const len = geom.boundingBox.getSize(new THREE.Vector3()).length();
+          const mat = new THREE.PointsMaterial({
+            size: len*0.002,
+            sizeAttenuation: true,
+            vertexColors: hasCol,
+            color: hasCol?undefined:0xffffff
+          });
+          object = new THREE.Points(geom, mat);
+          pivot = new THREE.Group();
+          pivot.add(object);
+          pivot.rotation.x = -Math.PI/2;
+          scene.add(pivot);
+        } else {
+          object = model;
+          object.traverse(m => { if (m.isMesh && !m.material) m.material = new THREE.MeshStandardMaterial({color:0xcccccc}); });
+          scene.add(object);
+        }
+
+        const target = pivot || object;
+        if (scale !== 1) target.scale.setScalar(scale);
+
+        const box = new THREE.Box3().setFromObject(target);
+        const size = box.getSize(new THREE.Vector3()).length();
+        const center = box.getCenter(new THREE.Vector3());
+        const dist = size / (2 * Math.tan(camera.fov * Math.PI / 360)) * 1.2; // marge 20%
+
+        camera.position.set(0,0,dist).add(center);
+        controls
