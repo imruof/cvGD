@@ -26,7 +26,15 @@
     /* bouton WhatsApp */
     .wa-btn img{height:2.2em;vertical-align:-0.2em;margin-left:.25em;}
   </style>
-  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"}}</script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/",
+        "@splats/": "https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d@0.4.7/build/"
+      }
+    }
+  </script>
 </head>
 <body>
   <div id="infos"><h1>Guillaume Dullier</h1><p>BIM Modeleur • 43 Rue de la République, 69220 Belleville-en-Beaujolais</p><p><a href="https://wa.me/33610262935" class="wa-btn" target="_blank" rel="noopener" aria-label="Appeler sur WhatsApp"><img src="https://img.icons8.com/color/24/000000/whatsapp.png" alt="WhatsApp"></a> 06 10 26 29 35 • ✉️ <a href="mailto:guillaumedullier@hotmail.fr">guillaumedullier@hotmail.fr</a></p></div>
@@ -39,22 +47,120 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
     import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
-    const Z=new THREE.Vector3(0,0,1);
-    function viewer(id,file,{rotateZ=false,scale=1,offsetYRatio=0}={}){
-      const c=document.getElementById(id);const scene=new THREE.Scene();scene.background=new THREE.Color(0xf6f6f9);
-      const cam=new THREE.PerspectiveCamera(45,1,0.1,1000);cam.position.set(0,1,5);
-      const renderer=new THREE.WebGLRenderer({antialias:true});c.appendChild(renderer.domElement);
-      const ctl=new OrbitControls(cam,renderer.domElement);ctl.enableDamping=true;
-      scene.add(new THREE.AmbientLight(0xffffff,0.6));const dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(2,4,2);scene.add(dl);
-      const rez=()=>{const w=c.clientWidth,h=c.clientHeight;cam.aspect=w/h;cam.updateProjectionMatrix();renderer.setSize(w,h);} ;rez();window.addEventListener('resize',rez);
-      const loader=file.endsWith('.ply')?new PLYLoader():new OBJLoader();loader.setPath('assets/');
-      let piv=null,obj=null;
-      loader.load(file,m=>{
-        if(file.endsWith('.ply')){const g=m;g.computeBoundingBox();const col=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:col,color:col?undefined:0xffffff});obj=new THREE.Points(g,mat);piv=new THREE.Group();piv.add(obj);piv.rotation.x=-Math.PI/2;scene.add(piv);}else{obj=m;obj.traverse(n=>{if(n.isMesh&&!n.material){n.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}const tgt=piv||obj;if(scale!==1)tgt.scale.setScalar(scale);const box=new THREE.Box3().setFromObject(tgt);const size=box.getSize(new THREE.Vector3()).length();const ctr=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(cam.fov*Math.PI/360))*1.2;cam.position.set(0,0,dist).add(ctr);ctl.target.copy(ctr);ctl.update();cam.near=dist/100;cam.far=dist*100;cam.updateProjectionMatrix();if(offsetYRatio!==0){const offset=size*offsetYRatio;tgt.position.y-=offset;}});
-      const ani=()=>{requestAnimationFrame(ani);if(rotateZ){if(piv)piv.rotation.z-=0.01;else if(obj)obj.rotateOnWorldAxis(Z,-0.01);}ctl.update();renderer.render(scene,cam);} ;ani();}
-    viewer('viewer1','6969 - Cloud.subsampled.ply',{rotateZ:true});
-    viewer('viewer2','chapnugetextured_simplificationcompletteMeshLab1000000.obj');
-    viewer('viewer3','6969 - Cloud.subsampled.ply',{rotateZ:true,scale:1.7,offsetYRatio:0.125});
+    import * as GaussianSplats3D from '@splats/gaussian-splats-3d.module.js';
+
+    const Z = new THREE.Vector3(0, 0, 1);
+
+    function viewer(id, file, { rotateZ = false, scale = 1, offsetYRatio = 0 } = {}) {
+      const c = document.getElementById(id);
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf6f6f9);
+
+      const cam = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+      cam.position.set(0, 1, 5);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      c.appendChild(renderer.domElement);
+
+      const ctl = new OrbitControls(cam, renderer.domElement);
+      ctl.enableDamping = true;
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+      dl.position.set(2, 4, 2);
+      scene.add(dl);
+
+      const rez = () => {
+        const w = c.clientWidth,
+          h = c.clientHeight;
+        cam.aspect = w / h;
+        cam.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      };
+      rez();
+      window.addEventListener('resize', rez);
+
+      /* --- prise en charge des fichiers .splat ------------------------------------ */
+      if (file.endsWith('.splat')) {
+        const gs = new GaussianSplats3D.DropInViewer({
+          parentElement: c,
+          // GitHub Pages ne propose pas les en‑têtes COOP/COEP ;
+          // on désactive donc l'usage de SharedArrayBuffer.
+          sharedMemoryForWorkers: false,
+        });
+        gs.load(`assets/${file}`);
+        return; // on sort : rien d'autre à faire pour ce viewer
+      }
+      /* --------------------------------------------------------------------------- */
+
+      const loader = file.endsWith('.ply') ? new PLYLoader() : new OBJLoader();
+      loader.setPath('assets/');
+
+      let piv = null,
+        obj = null;
+      loader.load(file, (m) => {
+        if (file.endsWith('.ply')) {
+          const g = m;
+          g.computeBoundingBox();
+          const col = g.hasAttribute('color');
+          const len = g.boundingBox.getSize(new THREE.Vector3()).length();
+          const mat = new THREE.PointsMaterial({
+            size: len * 0.002,
+            sizeAttenuation: true,
+            vertexColors: col,
+            color: col ? undefined : 0xffffff,
+          });
+          obj = new THREE.Points(g, mat);
+          piv = new THREE.Group();
+          piv.add(obj);
+          piv.rotation.x = -Math.PI / 2;
+          scene.add(piv);
+        } else {
+          obj = m;
+          obj.traverse((n) => {
+            if (n.isMesh && !n.material) {
+              n.material = new THREE.MeshStandardMaterial({ color: 0xcccccc });
+            }
+          });
+          scene.add(obj);
+        }
+        const tgt = piv || obj;
+        if (scale !== 1) tgt.scale.setScalar(scale);
+        const box = new THREE.Box3().setFromObject(tgt);
+        const size = box.getSize(new THREE.Vector3()).length();
+        const ctr = box.getCenter(new THREE.Vector3());
+        const dist = (size / (2 * Math.tan((cam.fov * Math.PI) / 360))) * 1.2;
+        cam.position.set(0, 0, dist).add(ctr);
+        ctl.target.copy(ctr);
+        ctl.update();
+        cam.near = dist / 100;
+        cam.far = dist * 100;
+        cam.updateProjectionMatrix();
+        if (offsetYRatio !== 0) {
+          const offset = size * offsetYRatio;
+          tgt.position.y -= offset;
+        }
+      });
+
+      const ani = () => {
+        requestAnimationFrame(ani);
+        if (rotateZ) {
+          if (piv) piv.rotation.z -= 0.01;
+          else if (obj) obj.rotateOnWorldAxis(Z, -0.01);
+        }
+        ctl.update();
+        renderer.render(scene, cam);
+      };
+      ani();
+    }
+
+    viewer('viewer1', '6969 - Cloud.subsampled.ply', { rotateZ: true });
+    viewer('viewer2', 'cv.splat', { scale: 1 }); // nouveau modèle dans le deuxième viewer
+    viewer('viewer3', '6969 - Cloud.subsampled.ply', {
+      rotateZ: true,
+      scale: 1.7,
+      offsetYRatio: 0.125,
+    });
   </script>
 </body>
 </html>
