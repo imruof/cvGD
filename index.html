@@ -80,75 +80,42 @@
   <!-- Script Three.js & viewers -->
   <script type="module">
     import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-    import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
-
-    const AXIS_Z = new THREE.Vector3(0,0,1);
-
-    function createViewer(id, file, { rotateZ=false, scale=1, offsetYRatio=0 }={}) {
-      const container = document.getElementById(id);
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xf6f6f9);
-
-      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-      camera.position.set(0, 1, 5);
-
-      const renderer = new THREE.WebGLRenderer({ antialias:true });
-      container.appendChild(renderer.domElement);
-
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-
-      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-      dirLight.position.set(2,4,2);
-      scene.add(dirLight);
-
-      function onResize() {
-        const w = container.clientWidth;
-        const h = container.clientHeight;
-        camera.aspect = w / h;
+    import { OrbitControls } from 'three/addons/controls.target.copy(center);
+        controls.update();
+        camera.near = dist/100;
+        camera.far  = dist*100;
         camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-      }
-      onResize();
-      window.addEventListener('resize', onResize);
+        if(offsetYRatio!==0){const offset=size*offsetYRatio; target.position.y -= offset;}
+      }, undefined, err=>console.error('Erreur chargement',file,err));
 
-      const loader = file.endsWith('.ply') ? new PLYLoader() : new OBJLoader();
-      loader.setPath('assets/');
-
-      let pivot=null, object=null;
-      loader.load(file, model => {
-        if (file.endsWith('.ply')) {
-          const geom = model;
-          geom.computeBoundingBox();
-          const hasCol = geom.hasAttribute('color');
-          const len = geom.boundingBox.getSize(new THREE.Vector3()).length();
-          const mat = new THREE.PointsMaterial({
-            size: len*0.002,
-            sizeAttenuation: true,
-            vertexColors: hasCol,
-            color: hasCol?undefined:0xffffff
-          });
-          object = new THREE.Points(geom, mat);
-          pivot = new THREE.Group();
-          pivot.add(object);
-          pivot.rotation.x = -Math.PI/2;
-          scene.add(pivot);
-        } else {
-          object = model;
-          object.traverse(m => { if (m.isMesh && !m.material) m.material = new THREE.MeshStandardMaterial({color:0xcccccc}); });
-          scene.add(object);
+      function animate(){
+        requestAnimationFrame(animate);
+        if(rotateZ){
+          if(pivot) pivot.rotation.z -= 0.01;
+          else if(object) object.rotateOnWorldAxis(AXIS_Z,-0.01);
         }
+        controls.update();
+        renderer.render(scene,camera);
+      }
+      animate();
+    }
 
-        const target = pivot || object;
-        if (scale !== 1) target.scale.setScalar(scale);
+    // ---- appels ----
+    createViewer('viewer1','6969 - Cloud.subsampled.ply',{rotateZ:true});
+    createViewer('viewer2','chapnugetextured_simplificationcompletteMeshLab1000000.obj');
+    createViewer('viewer3','6969 - Cloud.subsampled.ply',{rotateZ:true,scale:1.7,offsetYRatio:0.125});
+  </script>
 
-        const box = new THREE.Box3().setFromObject(target);
-        const size = box.getSize(new THREE.Vector3()).length();
-        const center = box.getCenter(new THREE.Vector3());
-        const dist = size / (2 * Math.tan(camera.fov * Math.PI / 360)) * 1.2; // marge 20%
-
-        camera.position.set(0,0,dist).add(center);
-        controls
+  <!-- Parallax & hauteur image -->
+  <script>
+    window.addEventListener('scroll',()=>{
+      document.body.style.backgroundPositionY = (window.pageYOffset * -0.3) + 'px';
+    });
+    const bg = new Image();
+    bg.src = 'assets/Projetcv_page-0001.jpg';
+    bg.onload = () => {
+      document.body.style.minHeight = bg.naturalHeight + 'px';
+    };
+  </script>
+</body>
+</html>
