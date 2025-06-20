@@ -70,10 +70,7 @@
           : new URL(`assets/${file}`, import.meta.url).href;
 
         gs.addSplatScene(splatUrl)
-          .then(() => gs.start())
-          .catch((err) => {
-            console.error('Échec du chargement du .splat :', err);
-          });
+          .catch((err) => console.error('Échec du chargement du .splat :', err));
         return; // on quitte : pas besoin d’initier notre pipeline Three.js
       }
       /* ------------------------------------------------------------------ */
