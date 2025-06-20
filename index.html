@@ -55,23 +55,42 @@
       const c = document.getElementById(id);
 
       /* ------------------------------------------------------------------
-         Gestion directe des .splat via DropInViewer
+         Affichage .splat via Viewer « tout‑en‑un » (plus fiable)
          ------------------------------------------------------------------ */
       if (file.endsWith('.splat')) {
-        const gs = new GaussianSplats3D.DropInViewer({
-          parentElement: c,
-          sharedMemoryForWorkers: false, // GitHub Pages ne sert pas COOP/COEP
-        });
-
-        // Construire une URL absolue pour que le chemin soit correct quel que soit
-        // le sous‑répertoire GitHub Pages (évite le 404 « assets/cv.splat »).
         const splatUrl = /^https?:\/\//.test(file)
           ? file
           : new URL(`assets/${file}`, import.meta.url).href;
 
-        gs.addSplatScene(splatUrl)
+        // Crée un viewer autosuffisant (canvas, caméra, controls, loop)
+        const gsViewer = new GaussianSplats3D.Viewer({
+          // on laisse le viewer gérer sa propre boucle (selfDrivenMode = true)
+          showLoadingUI: true,
+        });
+
+        gsViewer
+          .addSplatScene(splatUrl, {
+            scale: [scale, scale, scale],
+          })
+          .then(() => {
+            gsViewer.start();
+            // Place son canvas dans notre conteneur
+            c.appendChild(gsViewer.renderer.domElement);
+            // Ajuste la taille en même temps que la div
+            const resize = () => {
+              const w = c.clientWidth;
+              const h = c.clientHeight;
+              gsViewer.renderer.setSize(w, h);
+              gsViewer.camera.aspect = w / h;
+              gsViewer.camera.updateProjectionMatrix();
+            };
+            resize();
+            window.addEventListener('resize', resize);
+          })
           .catch((err) => console.error('Échec du chargement du .splat :', err));
-        return; // on quitte : pas besoin d’initier notre pipeline Three.js
+        return; // on quitte : pas besoin de notre pipeline Three.js
+      }
+      /* ------------------------------------------------------------------ */ // on quitte : pas besoin d’initier notre pipeline Three.js
       }
       /* ------------------------------------------------------------------ */
 
@@ -174,3 +193,4 @@
   </script>
 </body>
 </html>
+
