@@ -65,7 +65,9 @@
 
         // Construire une URL absolue pour que le chemin soit correct quel que soit
         // le sous‑répertoire GitHub Pages (évite le 404 « assets/cv.splat »).
-        const splatUrl = new URL(`assets/${file}`, import.meta.url).href;
+        const splatUrl = /^https?:\/\//.test(file)
+          ? file
+          : new URL(`assets/${file}`, import.meta.url).href;
 
         gs.addSplatScene(splatUrl)
           .then(() => gs.start())
@@ -166,7 +168,7 @@
     }
 
     viewer('viewer1', '6969 - Cloud.subsampled.ply', { rotateZ: true });
-    viewer('viewer2', 'cv.splat', { scale: 1 }); // Deuxième viewer : modèle .splat
+    viewer('viewer2', 'https://raw.githubusercontent.com/imruof/cvGD/main/assets/cv.splat', { scale: 1 }); // Deuxième viewer : modèle .splat
     viewer('viewer3', '6969 - Cloud.subsampled.ply', {
       rotateZ: true,
       scale: 1.7,
