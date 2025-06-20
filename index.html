@@ -21,12 +21,7 @@
     #infos{position:fixed;top:1rem;left:1rem;z-index:10;background:#ffffffcc;padding:.5rem 1rem;border-radius:.5rem}
     .viewer{width:100%;max-width:800px;height:500px;margin:120px auto 2rem;border:2px solid #ddd;border-radius:.75rem;box-shadow:0 4px 12px rgba(0,0,0,.1);background:#e5e7eb;overflow:hidden}
     .viewer.cvbox{height:auto;overflow:visible;background:rgba(255,255,255,.65);backdrop-filter:blur(2px);}
-    @media(max-width:600px){
-      #infos{left:50%;transform:translateX(-50%);top:.5rem;padding:.4rem .8rem;text-align:center;}
-      .viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}
-      /* arrière‑plan moins zoomé sur mobile */
-      body{background-size:contain;}
-    }.viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}}
+    @media(max-width:600px){#infos{left:50%;transform:translateX(-50%);top:.5rem;padding:.4rem .8rem;text-align:center;}.viewer{height:60vw;margin:90px auto 1.5rem;border-width:1px;}}
 
     /* bouton WhatsApp */
     .wa-btn img{height:2.2em;vertical-align:-0.2em;margin-left:.25em;}
@@ -57,23 +52,4 @@
       loader.load(file,m=>{
         if(file.endsWith('.ply')){const g=m;g.computeBoundingBox();const col=g.hasAttribute('color');const len=g.boundingBox.getSize(new THREE.Vector3()).length();const mat=new THREE.PointsMaterial({size:len*0.002,sizeAttenuation:true,vertexColors:col,color:col?undefined:0xffffff});obj=new THREE.Points(g,mat);piv=new THREE.Group();piv.add(obj);piv.rotation.x=-Math.PI/2;scene.add(piv);}else{obj=m;obj.traverse(n=>{if(n.isMesh&&!n.material){n.material=new THREE.MeshStandardMaterial({color:0xcccccc});}});scene.add(obj);}const tgt=piv||obj;if(scale!==1)tgt.scale.setScalar(scale);const box=new THREE.Box3().setFromObject(tgt);const size=box.getSize(new THREE.Vector3()).length();const ctr=box.getCenter(new THREE.Vector3());const dist=size/(2*Math.tan(cam.fov*Math.PI/360))*1.2;cam.position.set(0,0,dist).add(ctr);ctl.target.copy(ctr);ctl.update();cam.near=dist/100;cam.far=dist*100;cam.updateProjectionMatrix();if(offsetYRatio!==0){const offset=size*offsetYRatio;tgt.position.y-=offset;}});
       const ani=()=>{requestAnimationFrame(ani);if(rotateZ){if(piv)piv.rotation.z-=0.01;else if(obj)obj.rotateOnWorldAxis(Z,-0.01);}ctl.update();renderer.render(scene,cam);} ;ani();}
-    viewer('viewer1','6969 - Cloud.subsampled.ply',{rotateZ:true});
-    viewer('viewer2','chapnugetextured_simplificationcompletteMeshLab1000000.obj');
-    viewer('viewer3','6969 - Cloud.subsampled.ply',{rotateZ:true,scale:1.7,offsetYRatio:0.125});
-  </script>
-
-  <script>
-    // Effet parallax léger sur le fond
-    window.addEventListener('scroll',()=>{
-      document.body.style.backgroundPositionY = (window.pageYOffset * -0.3) + 'px';
-    });
-
-    // Assure que la hauteur de page couvre l'image de fond complète
-    const bg = new Image();
-    bg.src = 'assets/Projetcv_page-0001.jpg';
-    bg.onload = () => {
-      document.body.style.minHeight = bg.naturalHeight + 'px';
-    };
-  </script>
-</body>
-</html>
+    viewer('viewer1','6969 - Cloud.sub
