@@ -56,6 +56,19 @@
     viewer('viewer2','chapnugetextured_simplificationcompletteMeshLab1000000.obj');
     viewer('viewer3','6969 - Cloud.subsampled.ply',{rotateZ:true,scale:1.7,offsetYRatio:0.125});
   </script>
-  <script>window.addEventListener('scroll',()=>{document.body.style.backgroundPositionY=(window.pageYOffset*-0.3)+'px';});const bg=new Image();bg.src='assets/Projetcv_page-0001.jpg';bg.onload=()=>{document.body.style.minHeight=bg.naturalHeight+'px';};</script>
+
+  <script>
+    // Effet parallax léger sur le fond
+    window.addEventListener('scroll',()=>{
+      document.body.style.backgroundPositionY = (window.pageYOffset * -0.3) + 'px';
+    });
+
+    // Assure que la hauteur de page couvre l'image de fond complète
+    const bg = new Image();
+    bg.src = 'assets/Projetcv_page-0001.jpg';
+    bg.onload = () => {
+      document.body.style.minHeight = bg.naturalHeight + 'px';
+    };
+  </script>
 </body>
 </html>
